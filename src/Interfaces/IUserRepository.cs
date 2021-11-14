@@ -1,5 +1,5 @@
-﻿namespace Interfaces;
+﻿//namespace Interfaces;
 
-public interface IUserRepository : IRepository<Domain.User>
-{
-}
+//public interface IUserRepository : IRepository<Domain.User>
+//{
+//}

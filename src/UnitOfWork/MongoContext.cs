@@ -1,78 +1,98 @@
-﻿namespace UnitOfWork;
+﻿
 
-public class MongoContext : IMongoContext
-{
-    private readonly IConfiguration _configuration;
-    private readonly List<Func<Task>> _commands;
+//namespace UnitOfWork;
 
-    private IMongoDatabase Database { get; set; }
+//public class MongoContext : IMongoContext
+//{
+//    private readonly IConfiguration _configuration;
+//    private readonly List<Func<Task>> _commands;
 
-    public MongoClient MongoClient { get; set; }
+//    private IMongoDatabase Database { get; set; }
 
-    public IClientSessionHandle Session { get; set; }
+//    public MongoClient MongoClient { get; set; }
 
-    public MongoContext(IConfiguration configuration)
-    {
-        _configuration = configuration;
-        _commands = new List<Func<Task>>();
-    }
+//    public IClientSessionHandle Session { get; set; }
 
-    public void AddCommand(Func<Task> func)
-    {
-        _commands.Add(func);
-    }
+//    public MongoContext(IConfiguration configuration)
+//    {
+//        _configuration = configuration;
+//        _commands = new List<Func<Task>>();
+//    }
 
-    public IMongoCollection<T> GetCollection<T>(string name)
-    {
-        ConfigureMongo();
+//    public void AddCommand(Func<Task> func)
+//    {
+//        _commands.Add(func);
+//    }
 
-        return Database.GetCollection<T>(name);
-    }
+//    public IMongoCollection<T> GetCollection<T>(string name)
+//    {
+//        ConfigureMongo();
 
-    public async Task<int> SaveChanges()
-    {
-        ConfigureMongo();
+//        return Database.GetCollection<T>(name);
+//    }
 
-        using (Session = await MongoClient.StartSessionAsync())
-        {
-            Session.StartTransaction();
+//    public async Task<int> SaveChanges()
+//    {
+//        ConfigureMongo();
 
-            var commandTasks = _commands.Select(c => c());
+//        using (Session = await MongoClient.StartSessionAsync())
+//        {
+//            Session.StartTransaction();
 
-            await Task.WhenAll(commandTasks);
+//            var commandTasks = _commands.Select(c => c());
 
-            await Session.CommitTransactionAsync();
-        }
+//            await Task.WhenAll(commandTasks);
 
-        return _commands.Count;
-    }
-    public void Dispose()
-    {
-        Session?.Dispose();
-        GC.SuppressFinalize(this);
-    }
+//            await Session.CommitTransactionAsync();
+//        }
 
-    private void ConfigureMongo()
-    {
-        if (MongoClient != null)
-        {
-            return;
-        }
+//        return _commands.Count;
+//    }
+//    public void Dispose()
+//    {
+//        Session?.Dispose();
+//        GC.SuppressFinalize(this);
+//    }
 
-        var host = _configuration["MongoSettings:Host"];
-        var port = _configuration["MongoSettings:Port"];
-        var username = _configuration["MongoSettings:Username"];
-        var password = _configuration["MongoSettings:Password"];
+//    private void ConfigureMongo()
+//    {
+//        if (MongoClient != null) return;
 
-        // Configure mongo (You can inject the config, just to simplify)
-        var connectingString = GetConnectionString(host, port, username, password);
-        MongoClient = new MongoClient(connectingString);
+//        //var host = _configuration["MongoSettings:Host"];
+//        //var port = _configuration["MongoSettings:Port"];
+//        //var username = _configuration["MongoSettings:Username"];
+//        //var password = _configuration["MongoSettings:Password"];
+        
+//        var section = _configuration.GetSection(nameof(MongoSettings));
+//        var settings = section.Get<MongoSettings>();
 
-        Database = MongoClient.GetDatabase(_configuration["MongoSettings:DatabaseName"]);
-    }
+//        // Configure mongo (You can inject the config, just to simplify)
+//        var connectionString = GetConnectionString(settings);
+//        MongoClient = new MongoClient(connectionString);
+//        Database = MongoClient.GetDatabase(_configuration["MongoSettings:DatabaseName"]);
+//        var collection = Database.GetCollection<Domain.User>(settings.TableName);
+//        var user = new Domain.User() { Id = Guid.NewGuid(), FirstName = "John", LastName = "Morsley" };
+//        collection.InsertOne(user);
+//    }
 
-    private string GetConnectionString(string host, string port, string username, string password)
-    {
-        return $"mongodb://{username}:{password}@{host}:{port}";
-    }
-}
+//    public bool IsHealthy()
+//    {
+//        try
+//        {
+//            ConfigureMongo();
+            
+            
+//            return true;
+//        }
+//        catch (Exception e)
+//        {
+//            // ToDo --> Log e            
+//        }
+//        return false;
+//    }
+
+//    private string GetConnectionString(MongoSettings settings)
+//    {
+//        return $"mongodb://{settings.Username}:{settings.Password}@{settings.Host}:{settings.Port}";
+//    }
+//}

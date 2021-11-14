@@ -5,15 +5,22 @@ public class TestFixture
 {
     //private static IConfigurationRoot _configuration; 
     
-    private string _dockerContainerId;
-    private string _dockerContainerPort;
-    
-    public int MyProperty;
+    private string? _dockerContainerId;
+    private int _dockerContainerPort;
+
+    public MongoSettings _mongoSsettings { get; }
+
+    public TestFixture(MongoSettings settings)
+    {
+        _mongoSsettings = settings;
+    }
 
     //[OneTimeSetUp]
     public async Task RunBeforeTests()
     {
-        (_dockerContainerId, _dockerContainerPort) = await MongoDBInDocker.EnsureDockerStartedAndGetContainerIdAndPortAsync();
+        (_dockerContainerId, var dockerContainerPort) = await MongoDBInDocker.EnsureDockerStartedAndGetContainerIdAndPortAsync(_mongoSsettings);
+
+        _dockerContainerPort = Convert.ToInt32(dockerContainerPort);
 
         //var context = new MongoContext();
 
@@ -26,7 +33,7 @@ public class TestFixture
         await MongoDBInDocker.EnsureDockerContainersStoppedAndRemovedAsync(_dockerContainerId);
     }
 
-    public string GetContainerPort()
+    public int GetContainerPort()
     {
         //var port = await MongoDBInDocker.GetPort();
         //await _checkpoint.Reset(_configuration.GetConnectionString("AccessioningDbContext"));
@@ -45,4 +52,16 @@ public class TestFixture
 
     //    context.Database.Migrate();
     //}
+
+    public string MongoDBConnectionString
+    {
+        get { return MongoDBInDocker.ConnectionString(_mongoSsettings, _dockerContainerPort); }
+    }
+
+    //public string DatabaseName 
+    //{
+    //    get { return MongoDBInDocker. }
+    //}
+
+    
 }

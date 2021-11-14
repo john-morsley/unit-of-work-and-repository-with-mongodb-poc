@@ -1,4 +1,4 @@
-﻿//namespace Interfaces;
+﻿//namespace Domain.Interfaces;
 
 //public interface IMongoContext : IDisposable
 //{
