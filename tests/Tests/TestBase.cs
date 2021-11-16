@@ -2,14 +2,10 @@
 
 public class TestBase
 {
-    //protected readonly IConfiguration _configuration;
-    //protected readonly MongoSettings _mongoSettings;
     protected readonly TestFixture _fixture;    
-
 
     public TestBase()
     {
-        //var additional = GetInMemoryConfiguration();
         var configuration = GetConfiguration();
         var section = configuration.GetSection(nameof(MongoSettings));
         var settings = section.Get<MongoSettings>();

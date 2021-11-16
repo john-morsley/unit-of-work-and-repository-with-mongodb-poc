@@ -5,6 +5,7 @@ global using System.Net;
 global using System.Net.Sockets;
 global using System.Threading.Tasks;
 
+global using AutoFixture;
 global using Microsoft.Extensions.Configuration;
 global using Docker.DotNet;
 global using Docker.DotNet.Models;
@@ -16,4 +17,5 @@ global using IntegrationTests.TestUtilities;
 
 global using Persistence.Configuration;
 global using Persistence.Contexts;
+global using Persistence.Models;
 global using Persistence.Repositories;

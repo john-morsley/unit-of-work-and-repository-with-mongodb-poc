@@ -1,1 +1,2 @@
-﻿global using Domain.Interfaces;
+﻿global using Domain.Enumerations;
+global using Domain.Interfaces;
