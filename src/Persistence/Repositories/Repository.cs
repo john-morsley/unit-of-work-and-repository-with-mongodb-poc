@@ -76,13 +76,19 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     protected virtual IQueryable<TEntity> GetAll(IGetOptions options)
     {
-        var entities = _collection.AsQueryable();
+        //var entities = _collection.AsQueryable();
+        var entities = AsQueryable();
 
-        //entities = (MongoDB.Driver.Linq.IMongoQueryable<TEntity>)Sort(entities, options);
-        //entities = Filter(entities, options);
-        //entities = Search(entities, options);
+        entities = Sort(entities, options);
+        entities = Filter(entities, options);
+        entities = Search(entities, options);
 
         return entities;
+    }
+
+    protected IQueryable<TEntity> AsQueryable()
+    {
+        return _collection.AsQueryable();
     }
 
     protected virtual IQueryable<TEntity> Filter(IQueryable<TEntity> entities, IGetOptions options)
